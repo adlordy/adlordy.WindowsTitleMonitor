@@ -19,18 +19,21 @@ namespace adlordy.WindowTitleMonitor.Services
         {
             string path = _provider.GetPath(date);
 
-            var items = from line in GetLineEnumerator(new StreamReader(File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Write)))
-                        let value = Split(line)
-                        where value != null
-                        group value by value into g
-                        select g;
-
-            using (StreamWriter text = File.CreateText(Path.Combine(_provider.GetFolderPath(), $"{date:yyyy-MM-dd}.csv")))
+            using (var reader = new StreamReader(File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
             {
-                text.WriteLine("Title\tCount");
-                foreach (var item in items)
-                    text.WriteLine($"{item.Key}\t{item.Count()}");
-                text.Flush();
+                var items = from line in GetLineEnumerator(reader)
+                            let value = Split(line)
+                            where value != null
+                            group value by value into g
+                            select g;
+
+                using (StreamWriter text = File.CreateText(Path.Combine(_provider.GetFolderPath(), $"{date:yyyy-MM-dd}.csv")))
+                {
+                    text.WriteLine("Title\tCount");
+                    foreach (var item in items)
+                        text.WriteLine($"{item.Key}\t{item.Count()}");
+                    text.Flush();
+                }
             }
         }
 

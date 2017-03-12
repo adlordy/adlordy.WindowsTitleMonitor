@@ -5,6 +5,7 @@
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <AssemblyName>adlordy.WindowTitleMonitor</AssemblyName>
     <RootNamespace>adlordy.WindowTitleMonitor</RootNamespace>
+    <RuntimeIdentifiers>win7-x64;win10-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
