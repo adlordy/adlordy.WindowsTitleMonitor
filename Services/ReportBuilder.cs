@@ -27,7 +27,7 @@ namespace adlordy.WindowTitleMonitor.Services
                             group value by value into g
                             select g;
 
-                using (StreamWriter text = File.CreateText(Path.Combine(_provider.GetFolderPath(), $"{date:yyyy-MM-dd}.csv")))
+                using (StreamWriter text = File.CreateText(Path.Combine(_provider.GetFolderPath(), $"{date:yyyy-MM-dd_HHmmss}.csv")))
                 {
                     text.WriteLine("Title\tCount");
                     foreach (var item in items)
