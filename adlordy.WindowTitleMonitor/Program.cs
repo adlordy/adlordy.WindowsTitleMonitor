@@ -5,6 +5,8 @@ using Microsoft.Extensions.Logging;
 using adlordy.WindowTitleMonitor.Contracts;
 using System.Threading.Tasks;
 using adlordy.WindowTitleMonitor.Services;
+using adlordy.Outlook.Contracts;
+using adlordy.Outlook.Services;
 
 namespace adlordy.WindowTitleMonitor
 {
@@ -20,6 +22,7 @@ namespace adlordy.WindowTitleMonitor
                     .AddScoped<IWriter, FileWriter>()
                     .AddScoped<IReportBuilder, ReportBuilder>()
                     .AddScoped<IPathProvider, PathProvider>()
+                    .AddScoped<ISubjectReader,SubjectReader>()
                     .BuildServiceProvider();
 
                 var factory = serviceProvider.GetRequiredService<ILoggerFactory>();
@@ -49,6 +52,7 @@ namespace adlordy.WindowTitleMonitor
             var writer = scope.ServiceProvider.GetRequiredService<IWriter>();
             var titleService = scope.ServiceProvider.GetRequiredService<ITitleService>();
             var report = scope.ServiceProvider.GetRequiredService<IReportBuilder>();
+            var subjectReader = scope.ServiceProvider.GetRequiredService<ISubjectReader>();
 
             Task.Run(async () =>
             {
@@ -57,6 +61,8 @@ namespace adlordy.WindowTitleMonitor
                     var date = DateTime.Now;
 
                     var title = titleService.GetWindowTitle();
+                    if (title.EndsWith(" - Outlook"))
+                        title = subjectReader.GetOutlookSubject()+ " - Outlook";
                     writer.Write(date, title);
 
                     await Task.Delay(1000);

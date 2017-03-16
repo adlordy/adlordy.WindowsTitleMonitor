@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
     <AssemblyName>adlordy.WindowTitleMonitor</AssemblyName>
     <RootNamespace>adlordy.WindowTitleMonitor</RootNamespace>
     <RuntimeIdentifiers>win7-x64;win10-x64</RuntimeIdentifiers>
@@ -12,6 +12,10 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\adlordy.Outlook\adlordy.Outlook.csproj" />
   </ItemGroup>
 
 </Project>

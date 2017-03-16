@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "adlordy.WindowTitleMonitor", "adlordy.WindowTitleMonitor\adlordy.WindowTitleMonitor.csproj", "{11D67D85-CBCC-4B50-8557-8A4A86A99453}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adlordy.Outlook", "adlordy.Outlook\adlordy.Outlook.csproj", "{31E6ED9D-0205-4601-9AFB-303F3688254B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{11D67D85-CBCC-4B50-8557-8A4A86A99453}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11D67D85-CBCC-4B50-8557-8A4A86A99453}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11D67D85-CBCC-4B50-8557-8A4A86A99453}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31E6ED9D-0205-4601-9AFB-303F3688254B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31E6ED9D-0205-4601-9AFB-303F3688254B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31E6ED9D-0205-4601-9AFB-303F3688254B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31E6ED9D-0205-4601-9AFB-303F3688254B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
