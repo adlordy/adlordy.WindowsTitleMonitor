@@ -3,13 +3,9 @@ using adlordy.ElasticTitle.Extensions;
 using adlordy.ElasticTitle.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Nest;
 using System;
-using System.IO;
 using System.Threading;
 using System.Diagnostics;
-using System.Threading.Tasks.Dataflow;
-using adlordy.ElasticTitle.Models;
 
 namespace adlordy.ElasticTitle
 {
@@ -27,7 +23,7 @@ namespace adlordy.ElasticTitle
                     .BuildServiceProvider();
 
                 var factory = serviceProvider.GetRequiredService<ILoggerFactory>();
-                var logger = factory.AddConsole(Microsoft.Extensions.Logging.LogLevel.Debug)
+                var logger = factory.AddConsole(LogLevel.Debug)
                     .CreateLogger<Program>();
 
                 using (var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
@@ -43,10 +39,19 @@ namespace adlordy.ElasticTitle
                     var watch = new Stopwatch();
                     watch.Start();
                     var processor = ActivatorUtilities.CreateInstance<Processor>(scope.ServiceProvider, token.Token);
-                    processor.Process();
+                    try
+                    {
+                        processor.Process();
+                    }
+                    catch (OperationCanceledException)
+                    {
+                    }
+                    catch(Exception ex)
+                    {
+                        logger.LogError(new EventId(), ex, "Error occured during Elastic Title");
+                    }
                     watch.Stop();
-                    //token.Token.WaitHandle.WaitOne();
-                    logger.LogInformation("Stopping Elastic Title. Time: {0}", watch.Elapsed);
+                    logger.LogInformation("Stopped Elastic Title. Time: {0}", watch.Elapsed);
                 }
 
             }

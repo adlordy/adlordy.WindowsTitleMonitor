@@ -1,6 +1,5 @@
 ﻿using adlordy.ElasticTitle.Contracts;
 using adlordy.ElasticTitle.Extensions;
-using adlordy.ElasticTitle.Models;
 using Microsoft.Extensions.Logging;
 using Nest;
 using System;
@@ -10,7 +9,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks.Dataflow;
 using System.Threading.Tasks;
-using System.Collections.Concurrent;
 
 namespace adlordy.ElasticTitle.Services
 {
