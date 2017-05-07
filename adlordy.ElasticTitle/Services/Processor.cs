@@ -50,14 +50,21 @@ namespace adlordy.ElasticTitle.Services
             var files = Directory.GetFiles(path, "????-??-??.txt");
             var parseStates = new List<ParseState>();
 
-            var batchBlock = new BatchBlock<TitleModel>(3600, new GroupingDataflowBlockOptions { CancellationToken = _token });
-            var parseBlock = new ActionBlock<ParseState>(state => {
+            var parseBlock = new ActionBlock<ParseState>(state =>
+            {
                 _logger.LogInformation("Processing file {0}", state.File);
                 try
                 {
                     var lines = _parser.ParseFile(state.File);
-                    foreach (var line in lines)
-                        batchBlock.Post(line);
+                    var result = _client.IndexMany(lines, state.File.IndexName(), "title");
+                    if (result.IsValid)
+                    {
+                        _logger.LogInformation("Items {0} uploaded in {1}", result.Items.Count, result.Took);
+                    }
+                    else
+                    {
+                        _logger.LogError(new EventId(), result.OriginalException, "Failed to upload {0} items", result.Items.Count);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -68,27 +75,6 @@ namespace adlordy.ElasticTitle.Services
                     state.Complete();
                 }
             }, new ExecutionDataflowBlockOptions { CancellationToken = _token, MaxDegreeOfParallelism = Environment.ProcessorCount });
-
-            var uploadBlock = new ActionBlock<IEnumerable<TitleModel>>(
-                items =>
-                {
-                    var results = (from item in items
-                                group item by item.Timestamp.Date into date
-                                select _client.IndexMany(date, date.Key.IndexName(), "title")).ToList();
-
-                    foreach(var result in results)
-                    {
-                        if (result.IsValid)
-                        {
-                            _logger.LogInformation("Items {0} uploaded in {1}", result.Items.Count, result.Took);
-                        } else
-                        {
-                            _logger.LogError(new EventId(), result.OriginalException, "Failed to upload {0} items", result.Items.Count);
-                        }
-                    }
-                }, new ExecutionDataflowBlockOptions { CancellationToken = _token, MaxDegreeOfParallelism = Environment.ProcessorCount });
-            batchBlock.LinkTo(uploadBlock, new DataflowLinkOptions { PropagateCompletion = true });
-
             
             foreach (var file in files)
             {
@@ -103,13 +89,10 @@ namespace adlordy.ElasticTitle.Services
                 }
             }
 
-            Task.WhenAll(parseStates.Select(s => s.Task)).ContinueWith((task) => batchBlock.Complete(), _token);
-
             foreach (var parseState in parseStates)
                 parseBlock.Post(parseState);
 
-            parseBlock.Complete();
-            uploadBlock.Completion.Wait(_token);
+            Task.WaitAll(parseStates.Select(s => s.Task).ToArray(), _token);
         }
     }
 }
